@@ -1,6 +1,18 @@
 # frozen_string_literal: true
 
 require 'csv'
+
+def clean_zipcode(zip)
+  if zip.nil?
+    zip = '00000'
+  elsif zip.length < 5
+    zip = zip.rjust(5, '0')
+  elsif zip.length > 5
+    zip = zip[0..4]
+  end
+  zip
+end
+
 puts 'EventManager Initialised.'
 
 contents = CSV.open('event_attendees.csv',
@@ -8,14 +20,7 @@ contents = CSV.open('event_attendees.csv',
                     header_converters: :symbol)
 contents.each do |row|
   name = row[:first_name]
-  zipcode = row[:zipcode]
+  zipcode = clean_zipcode(row[:zipcode])
 
-  if zipcode.nil?
-    zipcode = '00000'
-  elsif zipcode.length < 5
-    zipcode = zipcode.rjust(5, '0')
-  elsif zipcode.length > 5
-    zipcode = zipcode[0..4]
-  end
   puts "#{name} #{zipcode}"
 end
